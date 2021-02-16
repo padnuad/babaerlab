@@ -31,3 +31,19 @@ func (r *userRepository) CreateUser(user domain.User) (domain.User, error) {
 
 	return user, nil
 }
+
+// GetUserById ..
+func (r *userRepository) GetUserById(userID string) (domain.User, error) {
+	user := domain.User{}
+
+	if err := r.db.
+		Debug().Where("user_id = ?", userID).
+		First(&user).
+		Error; err != nil {
+
+		log.Println("GetUserById error: ", err)
+		return user, err
+	}
+
+	return user, nil
+}

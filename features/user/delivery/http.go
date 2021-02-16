@@ -17,6 +17,7 @@ type Handler struct {
 func NewHandler(e *echo.Group, u domain.UserUsecase) *Handler {
 	h := Handler{usecase: u}
 	e.POST("/users", h.CreateUser)
+	e.GET("/user/:user_id", h.GetUserById)
 	return &h
 }
 
@@ -24,7 +25,9 @@ func NewHandler(e *echo.Group, u domain.UserUsecase) *Handler {
 func (h *Handler) CreateUser(c echo.Context) error {
 	reqMap := map[string]interface{}{}
 	user := domain.User{}
-
+	if err := c.Bind(&reqMap); err != nil {
+		log.Fatal(err)
+	}
 	// gutils.EchoBind(c, &reqMap, []string{"user_id"})
 	// gutils.EchoGatewayLogger(c, "CreateUser")
 
@@ -43,4 +46,29 @@ func (h *Handler) CreateUser(c echo.Context) error {
 
 	// return utils.SuccessResponse(c, result)
 	return c.JSONBlob(http.StatusOK, gutils.SendResponse(true, nil, result))
+}
+
+// GetUserById ..
+func (h *Handler) GetUserById(c echo.Context) error {
+	reqMap := map[string]interface{}{}
+
+	// gutils.EchoBind(c, &reqMap, []string{"user_id"})
+	// gutils.EchoGatewayLogger(c, "GetUser")
+	if err := c.Bind(&reqMap); err != nil {
+		log.Fatal(err)
+	}
+	reqByte, _ := json.Marshal(reqMap)
+	log.Println("Request payload: ", string(reqByte))
+
+	userID := reqMap["user_id"].(string)
+
+	result, err := h.usecase.GetUserById(userID)
+
+	if err != nil {
+		// return utils.ErrorResponse(c, err)
+		return c.JSON(http.StatusOK, map[string]interface{}{"success": false, "message": "GetUserById error"})
+	}
+
+	// return utils.SuccessResponse(c, result)
+	return c.JSON(http.StatusOK, map[string]interface{}{"success": true, "data": result})
 }

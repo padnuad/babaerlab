@@ -8,10 +8,12 @@ import (
 
 type UserUsecase interface {
 	CreateUser(User) (UserResponse, error)
+	GetUserById(userID string) (User, error)
 }
 
 type UserRepository interface {
 	CreateUser(User) (User, error)
+	GetUserById(userID string) (User, error)
 }
 
 type User struct {
@@ -28,10 +30,10 @@ type User struct {
 
 // UserWithoutPassword ..
 type UserResponse struct {
-	ID       string  `json:"user_id" form:"user_id"`
-	Name     *string `json:"name" form:"name" valid:"required"`
-	Username string  `json:"username" form:"username" `
-	Tel      string  `json:"tel" form:"tel"`
+	ID       uint32 `json:"user_id" form:"user_id"`
+	Name     string `json:"name" form:"name" valid:"required"`
+	Username string `json:"username" form:"username" `
+	Tel      string `json:"tel" form:"tel"`
 	// Type      UserType       `json:"type" form:"type" valid:"required"`
 	CreatedAt *time.Time     `json:"created_at" gorm:"default:now();"`
 	DeletedAt gorm.DeletedAt `json:"deleted_at"`
