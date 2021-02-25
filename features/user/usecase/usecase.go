@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"baberlab/domain"
-	"fmt"
 )
 
 // userUsecase ..
@@ -18,27 +17,17 @@ func NewUserUsecase(repo domain.UserRepository) domain.UserUsecase {
 }
 
 // CreateUser ..
-func (usecase *userUsecase) CreateUser(u domain.User) (domain.UserResponse, error) {
-	user, err := usecase.repo.CreateUser(u)
-	if err != nil {
-		return domain.UserResponse{}, err
-	}
+func (usecase *userUsecase) CreateUser(user domain.User) error {
+	return usecase.repo.CreateUser(user)
+}
 
-	userWithoutPassword := domain.UserResponse{}
-	fmt.Println(user)
-	// utils.MapStruct(user, &userWithoutPassword)
-	return userWithoutPassword, err
+// GetUserByID ..
+func (usecase *userUsecase) GetUserByID(userID string) (domain.User, error) {
+	return usecase.repo.GetUserByID(userID)
+
 }
 
 // GetUser ..
-func (usecase *userUsecase) GetUserById(userID string) (domain.User, error) {
-	return usecase.repo.GetUserById(userID)
-	// user, err := usecase.repo.GetUserById(userID)
-	// if err != nil {
-	// 	return domain.UserResponse{}, err
-	// }
-
-	// userWithoutPassword := domain.UserResponse{}
-	// utils.MapStruct(user, &userWithoutPassword)
-	// return userWithoutPassword, err
+func (usecase *userUsecase) GetUser() ([]domain.User, error) {
+	return usecase.repo.GetUser()
 }

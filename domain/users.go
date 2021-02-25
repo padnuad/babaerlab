@@ -7,37 +7,39 @@ import (
 )
 
 type UserUsecase interface {
-	CreateUser(User) (UserResponse, error)
-	GetUserById(userID string) (User, error)
+	CreateUser(User) error
+	GetUserByID(userID string) (User, error)
+	GetUser() ([]User, error)
 }
 
 type UserRepository interface {
-	CreateUser(User) (User, error)
-	GetUserById(userID string) (User, error)
+	CreateUser(User) error
+	GetUserByID(userID string) (User, error)
+	GetUser() ([]User, error)
 }
 
 type User struct {
-	UserID      string `gorm:"primary_key;AUTO_INCREMENT" json:"user_id"`
+	ID          uint32 `gorm:"primary_key;AUTO_INCREMENT" json:"id"`
 	Name        string `gorm:"NOT NULL;TYPE:varchar(100)" json:"name"`
 	Address     string `gorm:"TYPE:varchar(100)" json:"address"`
 	Numberphone string `gorm:"TYPE:varchar(10)" json:"numberphone"`
 	Email       string `gorm:"unique;NOT NULL;TYPE:varchar(100)" json:"email"`
-	Status      int
-	CreatedAt   time.Time  `gorm:"DEFAULT:now()" json:"created_at"`
-	UpdatedAt   *time.Time `gorm:"DEFAULT:now()" json:"updated_at"`
-	DeletedAt   *time.Time `gorm:"DEFAULT:NULL" json:"deleted_at"`
+	// Status      uint32     `json:"status`
+	CreatedAt *time.Time     `json:"created_at" gorm:"default:now();"`
+	UpdatedAt *time.Time     `json:"updated_at" gorm:"default:now();"`
+	DeletedAt gorm.DeletedAt `json:"deleted_at"`
 }
 
 // UserWithoutPassword ..
 type UserResponse struct {
-	ID       uint32 `json:"user_id" form:"user_id"`
-	Name     string `json:"name" form:"name" valid:"required"`
-	Username string `json:"username" form:"username" `
-	Tel      string `json:"tel" form:"tel"`
+	ID      string `json:"user_id" form:"user_id"`
+	Name    string `json:"name" form:"name" `
+	Address string `json:"address" form:"address" `
+	Email   string `json:"email" form:"email"`
 	// Type      UserType       `json:"type" form:"type" valid:"required"`
-	CreatedAt *time.Time     `json:"created_at" gorm:"default:now();"`
+	CreatedAt *time.Time     `json:"created_at"`
 	DeletedAt gorm.DeletedAt `json:"deleted_at"`
-	UpdatedAt *time.Time     `json:"updated_at" gorm:"default:now();"`
+	UpdatedAt *time.Time     `json:"updated_at"`
 }
 
 // type Shop struct {
